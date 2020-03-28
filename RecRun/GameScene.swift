@@ -36,7 +36,7 @@ class GameScene: SKScene {
         js.alpha = 0.5
         let point = CGPoint(x: UIScreen.main.bounds.width * -0.5 + js.radius + 45, y: UIScreen.main.bounds.height * -0.5 + js.radius + 45)
         js.position = point
-        js.zPosition = 0
+        js.zPosition = 15
         return js
     }()
     
@@ -46,7 +46,7 @@ class GameScene: SKScene {
         js.name = "knob"
         js.size = CGSize(width: 60, height: 60)
         js.position = point
-        js.zPosition = 0
+        js.zPosition = 15
         return js
     }()
     
