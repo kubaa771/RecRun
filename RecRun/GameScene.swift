@@ -20,6 +20,7 @@ class GameScene: SKScene {
     var ground = SKSpriteNode()
     var spikes = SKSpriteNode()
     var flyingEnemy = SKSpriteNode()
+    var checkpoints = SKSpriteNode()
     
     let playerCategory: UInt32 = 1 << 1
     let groundCategory: UInt32 = 1 << 2
@@ -30,6 +31,8 @@ class GameScene: SKScene {
     var animations = Animations(playerColor: "Blue")
     var walkAnimation: SKAction!
     var jumpAnimation: SKAction!
+    
+    var lastKnownPosition = CGPoint(x: 100, y: 53)
     
     lazy var analogJoystick: TLAnalogJoystick = {
         let js = TLAnalogJoystick(withDiameter: 100)
@@ -67,6 +70,7 @@ class GameScene: SKScene {
             child.name = "spikes"
         }
         flyingEnemy = self.childNode(withName: "flyingEnemy") as! SKSpriteNode
+        checkpoints = self.childNode(withName: "checkpoints") as! SKSpriteNode
         setup()
         
     }
@@ -124,13 +128,26 @@ class GameScene: SKScene {
    
     
     override func update(_ currentTime: TimeInterval) {
-        // Called before each frame is rendered
-        //print("background: \(background.position.x)")
-        //print("camera: \(cam.position.x)")
-        //print("player: \(player.position.x)")
         
         if player.position.x > 0 {
            cam.position.x = player.position.x
+        }
+        
+        if player.position.x < -315 {
+            player.position.x = -313
+        }
+        
+        //print(player.position.y)
+        
+        if player.position.y < -200 {
+            wasHurt()
+            player.position = lastKnownPosition
+        }
+        
+        for checkpoint in checkpoints.children {
+            if player.intersects(checkpoint) {
+                lastKnownPosition = player.position
+            }
         }
         
         
@@ -180,8 +197,7 @@ extension GameScene: SKPhysicsContactDelegate {
         
         
         if firstBody.node?.name == "player" && secondBody.node?.name == "ground" {
-            print("contact")
-             grounded = true
+            grounded = true
         }
         
         if firstBody.node?.name == "player" && secondBody.node?.name == "spikes" && hurt == false{
